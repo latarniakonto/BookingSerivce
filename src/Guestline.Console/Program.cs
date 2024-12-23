@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Guestline.Console.Models;
+using Guestline.Console.Extensions;
 using System.Text.RegularExpressions;
 
 IList<Hotel>? hotels = new List<Hotel>();
@@ -20,14 +21,19 @@ using (StreamReader readBookings = new StreamReader(pathToBookings))
 var hotel = hotels?.FirstOrDefault();
 var booking = bookings?.FirstOrDefault();
 Console.WriteLine(hotel?.Rooms?.FirstOrDefault()?.RoomId);
-Console.WriteLine(booking?.Arrival);
 
 string? input = Console.ReadLine();
-string pattern = @"Availability\(H(\d+), (20\d{2})(\d{2})(\d{2})(\-(20\d{2})(\d{2})(\d{2}))?, [A-Z]{3}\)";
+string pattern = @"Availability\((?<hotel>(H(\d+))), (?<timeline>(20\d{2})(\d{2})(\d{2})(\-(20\d{2})(\d{2})(\d{2}))?), (?<roomType>[A-Z]{3})\)";
 Regex regex = new Regex(pattern);
 
-if (!string.IsNullOrEmpty(input) && regex.IsMatch(input))
+if (string.IsNullOrEmpty(input) || !regex.IsMatch(input))
 {
-    Console.WriteLine("Match");
+    Console.WriteLine("Not recognized command");
+    return;
 }
+
+Match match = regex.Match(input);
+DateRange timeline = match.Groups["timeline"].ToString().GetDateRangeFromYYYYMMDDString();
+Console.WriteLine(timeline.StartDate);
+Console.WriteLine(timeline.EndDate);
 
