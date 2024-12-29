@@ -22,6 +22,9 @@ public class BookingService
         if (hotel == null || hotel.RoomTypes == null || hotel.Rooms == null)
             throw new InvalidOperationException($"Booking service cannot operate on hotel_{p_hotel}");
 
+        if (hotel.RoomTypes.FirstOrDefault(rt => rt.Code == p_roomType) == null)
+            return 0;
+
         return 0;
     }
 }
