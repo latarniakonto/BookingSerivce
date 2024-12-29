@@ -25,6 +25,9 @@ public class BookingService
         if (hotel.RoomTypes.FirstOrDefault(rt => rt.Code == p_roomType) == null)
             return 0;
 
+        if (bookings.Count == 0)
+            return hotel.Rooms.Where(r => r.RoomType == p_roomType).Count();
+
         return 0;
     }
 }
