@@ -18,6 +18,10 @@ public class BookingService
         if (hotels.Count == 0)
             throw new InvalidOperationException("Booking service has no valid hotels to use");
 
+        Hotel? hotel = hotels.FirstOrDefault(h => h.Id == p_hotel);
+        if (hotel == null || hotel.RoomTypes == null || hotel.Rooms == null)
+            throw new InvalidOperationException($"Booking service cannot operate on hotel_{p_hotel}");
+
         return 0;
     }
 }
