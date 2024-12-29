@@ -47,5 +47,62 @@ public class BookServiceTest
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => bookingService.GetRoomAvailability("H1", "20240901-20240903", "SGL"));
     }
+
+    [Fact]
+    public void Check_Hotel_Occupancy_Invalid_Hotel()
+    {
+        // Arrange
+        var fixture = new Fixture();
+
+        fixture.Customize<Hotel>(h => h
+            .With(h1 => h1.Id, "H1").With(h1 => h1.Name, "Test1")
+            .With(h1 => h1.RoomTypes, fixture.CreateMany<RoomType>(1).ToList())
+            .With(h1 => h1.Rooms, fixture.CreateMany<Room>(3).ToList()));
+
+        var bookingService = fixture.Build<BookingService>()
+            .With(bs => bs.bookings, fixture.CreateMany<Booking>(1).ToList())
+            .With(bs => bs.hotels, fixture.CreateMany<Hotel>(1).ToList())
+            .Create();
+        // Act & Assert
+        var exception = Assert.Throws<InvalidOperationException>(() => bookingService.GetRoomAvailability("H2", "20240901-20240903", "SGL"));
+    }
+
+    [Fact]
+    public void Check_Hotel_Occupancy_Invalid_Hotel_Null_Rooms()
+    {
+        // Arrange
+        var fixture = new Fixture();
+
+        fixture.Customize<Hotel>(h => h
+            .With(h1 => h1.Id, "H1").With(h1 => h1.Name, "Test1")
+            .With(h1 => h1.RoomTypes, fixture.CreateMany<RoomType>(1).ToList())
+            .Without(h1 => h1.Rooms));
+
+        var bookingService = fixture.Build<BookingService>()
+            .With(bs => bs.bookings, fixture.CreateMany<Booking>(1).ToList())
+            .With(bs => bs.hotels, fixture.CreateMany<Hotel>(1).ToList())
+            .Create();
+        // Act & Assert
+        var exception = Assert.Throws<InvalidOperationException>(() => bookingService.GetRoomAvailability("H1", "20240901-20240903", "SGL"));
+    }
+
+    [Fact]
+    public void Check_Hotel_Occupancy_Invalid_Hotel_Null_Room_Types()
+    {
+        // Arrange
+        var fixture = new Fixture();
+
+        fixture.Customize<Hotel>(h => h
+            .With(h1 => h1.Id, "H1").With(h1 => h1.Name, "Test1")
+            .Without(h1 => h1.RoomTypes)
+            .With(h1 => h1.Rooms, fixture.CreateMany<Room>(3).ToList()));
+
+        var bookingService = fixture.Build<BookingService>()
+            .With(bs => bs.bookings, fixture.CreateMany<Booking>(1).ToList())
+            .With(bs => bs.hotels, fixture.CreateMany<Hotel>(1).ToList())
+            .Create();
+        // Act & Assert
+        var exception = Assert.Throws<InvalidOperationException>(() => bookingService.GetRoomAvailability("H1", "20240901-20240903", "SGL"));
+    }
 }
 
