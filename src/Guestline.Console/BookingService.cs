@@ -15,7 +15,10 @@ public class BookingService
 
     public int GetRoomAvailability(string p_hotel, string p_dateRange, string p_roomType)
     {
-       return 0;
+        if (hotels.Count == 0)
+            throw new InvalidOperationException("Booking service has no valid hotels to use");
+
+        return 0;
     }
 }
 
