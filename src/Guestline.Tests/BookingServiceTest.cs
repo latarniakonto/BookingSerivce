@@ -132,5 +132,38 @@ public class BookServiceTest
         // Assert
         Assert.Equal(0, availability);
     }
+
+    [Fact]
+    public void Check_Hotel_Occupancy_With_Overlapping_Bookings()
+    {
+        // Arrange
+        var fixture = new Fixture();
+        fixture.Customize<Room>(r => r
+                .With(r1 => r1.RoomId, fixture.Create<string>())
+                .With(r1 => r1.RoomType, "SGL"));
+
+        fixture.Customize<RoomType>(rt => rt
+                .With(rt1 => rt1.Code, "SGL")
+                .With(rt1 => rt1.Description, fixture.Create<string>()));
+
+        fixture.Customize<Hotel>(h => h
+            .With(h1 => h1.Id, "H1").With(h1 => h1.Name, "Test1")
+            .With(h1 => h1.RoomTypes, fixture.CreateMany<RoomType>(1).ToList())
+            .With(h1 => h1.Rooms, fixture.CreateMany<Room>(3).ToList()));
+
+        fixture.Customize<Booking>(b => b
+                .With(b1 => b1.HotelId, "H1").With(b1 => b1.RoomType, "SGL")
+                .With(b1 => b1.Arrival, "20240902").With(b1 => b1.Departure, "20240903")
+                .With(b1 => b1.RoomRate, "Prepaid"));
+
+        var bookingService = fixture.Build<BookingService>()
+            .With(bs => bs.bookings, fixture.CreateMany<Booking>(1).ToList())
+            .With(bs => bs.hotels, fixture.CreateMany<Hotel>(3).ToList())
+            .Create();
+        // Act
+        int availability = bookingService.GetRoomAvailability("H1", "20240901-20240903", "SGL");
+        // Assert
+        Assert.Equal(2, availability);
+    }
 }
 
