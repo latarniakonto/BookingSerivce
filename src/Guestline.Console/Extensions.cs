@@ -8,7 +8,7 @@ public struct DateRange
     public DateTime StartDate;
     public DateTime? EndDate;
 
-    public DateRange(string p_startDate, string p_endDate)
+    public DateRange(string p_startDate, string? p_endDate)
     {
         string format = "yyyyMMdd";
         CultureInfo provider = CultureInfo.InvariantCulture;
