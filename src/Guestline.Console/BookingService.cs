@@ -1,4 +1,5 @@
 using Guestline.Console.Models;
+using Guestline.Console.Extensions;
 
 namespace Guestline.Console.Services;
 
@@ -28,7 +29,26 @@ public class BookingService
         if (bookings.Count == 0)
             return hotel.Rooms.Where(r => r.RoomType == p_roomType).Count();
 
-        return 0;
+        int candidateRooms = hotel.Rooms.Where(r => r.RoomType == p_roomType).Count();
+        int overlappingBookings = GetOverlappingBookings(p_hotel, p_dateRange, p_roomType);
+
+        return candidateRooms - overlappingBookings;
+    }
+
+    private int GetOverlappingBookings(string p_hotel, string p_dateRange, string p_roomType)
+    {
+        DateRange newBooking = p_dateRange.GetDateRangeFromYYYYMMDDString();
+        return bookings.Where(b => b.HotelId == p_hotel && b.RoomType == p_roomType)
+            .Where(b => b.Arrival != null && !IsOverlapping(new DateRange(b.Arrival, b.Departure), newBooking)).Count();
+    }
+
+    private bool IsOverlapping(DateRange p_existingBooking, DateRange p_newBooking)
+    {
+        DateTime maxLowerBound = new[] {p_existingBooking.StartDate, p_newBooking.StartDate}.Max();
+        DateTime minLowerBound = new[] {p_existingBooking.EndDate, p_newBooking.EndDate}.Min() ??
+             new[] {p_existingBooking.StartDate, p_newBooking.StartDate}.Min();
+
+        return DateTime.Compare(minLowerBound, maxLowerBound) <= 0;
     }
 }
 
