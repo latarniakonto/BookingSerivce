@@ -165,5 +165,49 @@ public class BookServiceTest
         // Assert
         Assert.Equal(2, availability);
     }
+
+    [Fact]
+    public void Check_Hotel_Occupancy_With_Overlapping_Bookings_Overbooking_Scenario()
+    {
+        // Arrange
+        var fixture = new Fixture();
+        fixture.Customize<Room>(r => r
+                .With(r1 => r1.RoomId, fixture.Create<string>())
+                .With(r1 => r1.RoomType, "SGL"));
+
+        fixture.Customize<RoomType>(rt => rt
+                .With(rt1 => rt1.Code, "SGL")
+                .With(rt1 => rt1.Description, fixture.Create<string>()));
+
+        fixture.Customize<Hotel>(h => h
+            .With(h1 => h1.Id, "H1").With(h1 => h1.Name, "Test1")
+            .With(h1 => h1.RoomTypes, fixture.CreateMany<RoomType>(1).ToList())
+            .With(h1 => h1.Rooms, fixture.CreateMany<Room>(1).ToList()));
+
+        var booking1 = fixture.Build<Booking>()
+                .With(b => b.HotelId, "H1").With(b => b.RoomType, "SGL")
+                .With(b => b.Arrival, "20240902").With(b => b.Departure, "20240903")
+                .With(b => b.RoomRate, "Prepaid").Create();
+
+        var booking2 = fixture.Build<Booking>()
+                .With(b => b.HotelId, "H1").With(b => b.RoomType, "SGL")
+                .With(b => b.Arrival, "20240901").With(b => b.Departure, "20240902")
+                .With(b => b.RoomRate, "Prepaid").Create();
+
+        var booking3 = fixture.Build<Booking>()
+                .With(b => b.HotelId, "H1").With(b => b.RoomType, "SGL")
+                .With(b => b.Arrival, "20240903").Without(b => b.Departure)
+                .With(b => b.RoomRate, "Prepaid").Create();
+        var bookings = new List<Booking> {booking1, booking2, booking3};
+
+        var bookingService = fixture.Build<BookingService>()
+            .With(bs => bs.bookings, bookings)
+            .With(bs => bs.hotels, fixture.CreateMany<Hotel>(1).ToList())
+            .Create();
+        // Act
+        int availability = bookingService.GetRoomAvailability("H1", "20240901-20240903", "SGL");
+        // Assert
+        Assert.Equal(-2, availability);
+    }
 }
 
