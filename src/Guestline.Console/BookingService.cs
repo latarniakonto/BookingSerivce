@@ -44,6 +44,12 @@ public class BookingService
 
     private bool IsOverlapping(DateRange p_existingBooking, DateRange p_newBooking)
     {
+        if (p_existingBooking.EndDate == null)
+            p_existingBooking.EndDate = p_existingBooking.StartDate;
+
+        if (p_newBooking.EndDate == null)
+            p_newBooking.EndDate = p_newBooking.StartDate;
+
         DateTime maxLowerBound = new[] {p_existingBooking.StartDate, p_newBooking.StartDate}.Max();
         DateTime minUpperBound = new[] {p_existingBooking.EndDate, p_newBooking.EndDate}.Min() ??
              new[] {p_existingBooking.StartDate, p_newBooking.StartDate}.Min();
