@@ -39,16 +39,17 @@ public class BookingService
     {
         DateRange newBooking = p_dateRange.GetDateRangeFromYYYYMMDDString();
         return bookings.Where(b => b.HotelId == p_hotel && b.RoomType == p_roomType)
-            .Where(b => b.Arrival != null && !IsOverlapping(new DateRange(b.Arrival, b.Departure), newBooking)).Count();
+            .Where(b => b.Arrival != null && IsOverlapping(new DateRange(b.Arrival, b.Departure), newBooking)).Count();
     }
 
     private bool IsOverlapping(DateRange p_existingBooking, DateRange p_newBooking)
     {
         DateTime maxLowerBound = new[] {p_existingBooking.StartDate, p_newBooking.StartDate}.Max();
-        DateTime minLowerBound = new[] {p_existingBooking.EndDate, p_newBooking.EndDate}.Min() ??
+        DateTime minUpperBound = new[] {p_existingBooking.EndDate, p_newBooking.EndDate}.Min() ??
              new[] {p_existingBooking.StartDate, p_newBooking.StartDate}.Min();
 
-        return DateTime.Compare(minLowerBound, maxLowerBound) <= 0;
+        int result = DateTime.Compare(maxLowerBound, minUpperBound);
+        return result <= 0;
     }
 }
 
