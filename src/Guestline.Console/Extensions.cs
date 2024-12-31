@@ -31,5 +31,18 @@ public static class Extensions
         string departure = dateMatch.Groups["departure"].ToString();
         return new DateRange(arrival, departure);
     }
+
+    public static DateTime GetDateTimeFromYYYYMMDDString(this string p_date)
+    {
+        string pattern = @"(?<date>(20\d{2})(\d{2})(\d{2}))";
+        Regex regex = new Regex(pattern);
+        if (!regex.IsMatch(p_date))
+            throw new ArgumentException("Wrong string date format");
+
+        Match dateMatch = regex.Match(p_date);
+        string date = dateMatch.Groups["date"].ToString();
+        return DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
+    }
+
 }
 
