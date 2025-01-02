@@ -35,14 +35,11 @@ foreach (Booking booking in bookings)
 }
 
 string? input = Console.ReadLine();
-string pattern = @"Availability\((?<hotel>(H(\d+))), (?<timeline>(20\d{2})(\d{2})(\d{2})(\-(20\d{2})(\d{2})(\d{2}))?), (?<roomType>[A-Z]{3})\)";
+string pattern = @"Availability\(\s*(?<hotel>(H(\d+))),\s*(?<timeline>(20\d{2})(\d{2})(\d{2})(\-(20\d{2})(\d{2})(\d{2}))?),\s*(?<roomType>[A-Z]{3})\s*\)";
 Regex regex = new Regex(pattern);
 
 if (string.IsNullOrEmpty(input) || !regex.IsMatch(input))
-{
-    Console.WriteLine("Not recognized command");
-    return;
-}
+    throw new IOException($"Booking Service: '{input}' is not a supported command");
 
 Match match = regex.Match(input);
 DateRange timeline = match.Groups["timeline"].ToString().GetDateRangeFromYYYYMMDDString();
