@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Guestline.Console.Models;
 using Guestline.Console.Extensions;
+using Guestline.Console.Services;
 using System.Text.RegularExpressions;
 
 IList<Hotel>? hotels;
@@ -43,6 +44,8 @@ if (string.IsNullOrEmpty(input) || !regex.IsMatch(input))
 
 Match match = regex.Match(input);
 DateRange timeline = match.Groups["timeline"].ToString().GetDateRangeFromYYYYMMDDString();
-Console.WriteLine(timeline.StartDate);
-Console.WriteLine(timeline.EndDate);
+string hotelId = match.Groups["hotel"].ToString();
+string roomType = match.Groups["roomType"].ToString();
+
+BookingService service = new BookingService(bookings, hotels);
 
