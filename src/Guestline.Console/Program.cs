@@ -3,8 +3,8 @@ using Guestline.Console.Models;
 using Guestline.Console.Extensions;
 using System.Text.RegularExpressions;
 
-IList<Hotel>? hotels = new List<Hotel>();
-IList<Booking>? bookings = new List<Booking>();
+IList<Hotel>? hotels;
+IList<Booking>? bookings;
 
 string pathToHotels = Path.Combine(Directory.GetCurrentDirectory(), "hotels.json");
 string pathToBookings = Path.Combine(Directory.GetCurrentDirectory(), "bookings.json");
@@ -18,9 +18,21 @@ using (StreamReader readBookings = new StreamReader(pathToBookings))
     bookings = JsonSerializer.Deserialize<List<Booking>>(json, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
 }
 
-var hotel = hotels?.FirstOrDefault();
-var booking = bookings?.FirstOrDefault();
-Console.WriteLine(hotel?.Rooms?.FirstOrDefault()?.RoomId);
+if (hotels == null)
+    throw new ArgumentNullException($"Booking service: data initialization for hotels failed");
+
+if (bookings == null)
+    throw new ArgumentNullException($"Booking service: data initialization for bookings failed");
+
+foreach (Hotel hotel in hotels)
+{
+    hotel.Validate();
+}
+
+foreach (Booking booking in bookings)
+{
+    booking.Validate();
+}
 
 string? input = Console.ReadLine();
 string pattern = @"Availability\((?<hotel>(H(\d+))), (?<timeline>(20\d{2})(\d{2})(\d{2})(\-(20\d{2})(\d{2})(\d{2}))?), (?<roomType>[A-Z]{3})\)";
