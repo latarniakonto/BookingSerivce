@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Guestline.Console.Models;
-using Guestline.Console.Extensions;
 using Guestline.Console.Services;
 using System.Text.RegularExpressions;
 
@@ -43,9 +42,12 @@ if (string.IsNullOrEmpty(input) || !regex.IsMatch(input))
     throw new IOException($"Booking Service: '{input}' is not a supported command");
 
 Match match = regex.Match(input);
-DateRange timeline = match.Groups["timeline"].ToString().GetDateRangeFromYYYYMMDDString();
+string timeline = match.Groups["timeline"].ToString();
 string hotelId = match.Groups["hotel"].ToString();
 string roomType = match.Groups["roomType"].ToString();
 
 BookingService service = new BookingService(bookings, hotels);
+int roomAvailability = service.GetRoomAvailability(hotelId, timeline, roomType);
+
+Console.WriteLine($"Room availability: {roomAvailability}");
 
