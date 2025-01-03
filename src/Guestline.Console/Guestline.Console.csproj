@@ -7,4 +7,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <Target Name="CopyJson" AfterTargets="Build">
+    <MakeDir Directories="$(OutDir)" />
+    <Copy SourceFiles="data/bookings.json;data/hotels.json" DestinationFolder="$(OutDir)" />
+  </Target>
+
 </Project>
