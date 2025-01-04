@@ -13,6 +13,18 @@ To set up and run the application, follow these steps:
 4. Go to `/src/Guestline.Console/bin/Debug/net8.0/`
 5. Run `./Guestline.Console`
 
+## Setup Instructions (Windows)
+
+To set up and run the application, follow these steps:
+
+1. Clone the repository to your local machine.
+2. Navigate to the project directory.
+3. Run `dotnet build`
+4. Go to `\src\Guestline.Console\bin\Debug\net8.0\`
+5. Run `.\Guestline.Console.exe`
+
+You can also just open the application and run it from the Visual Studio or any other IDE of your choice
+
 ## Usage
 After successfully building the application the program lets you
 to check a new booking availability against a base of all bookings stored in
