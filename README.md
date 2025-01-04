@@ -31,11 +31,11 @@ to check a new booking availability against a base of all bookings stored in
 `bookings.json` file</br>
 To see the availability run this command: `Availability(hotel_id, date_range, room_type)`</br>
 ### Input
-1. hotel_id
+1. `hotel_id`
 - `H` followed by a number (e.g. H1, H2, H100)
-2. date_range
+2. `date_range`
 - A date range represented as `YYYYMMDD-YYYYMMDD` (`-YYYMMDD` part is optional)
-3. room_type
+3. `room_type`
 - A three-letter uppercase abbreviation (e.g. `SGL`, `DBL`)
 - The `RoomType` validator currently only accepts `SGL` and `DBL`
 
